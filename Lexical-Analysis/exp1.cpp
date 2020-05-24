@@ -134,10 +134,9 @@ const string boundsArray[]={
 const string keywordsArray[]={
         "if", "else", "while", "signed", "throw", "union", "this", "int", "char", "double", "unsigned", "const", "goto",
         "virtual", "for", "float", "break", "auto", "class", "operator", "case", "do", "long", "typedef", "static",
-        "friend", "template",
-        "default", "new", "void", "register", "extern", "return", "enum", "inline", "try", "short", "continue",
-        "sizeof", "switch",
-        "private", "protected", "asm", "while", "catch", "delete", "public", "volatile", "struct", "true", "false"
+        "friend", "template", "default", "new", "void", "register", "extern", "return", "enum", "inline", "try",
+        "short", "continue", "sizeof", "switch", "private", "protected", "asm", "while", "catch", "delete", "public",
+        "volatile", "struct", "true", "false"
 };
 
 AutoMachine mLabel(Label, true), mChar(Char, true),
