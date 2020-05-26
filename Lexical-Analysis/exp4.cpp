@@ -15,7 +15,7 @@ namespace Lexical{
 
     using namespace std;
 
-    vector<pair<string,string>> result;
+    vector<pair<string, string>> result;
 
     class TrieNode{
     public:
@@ -23,7 +23,7 @@ namespace Lexical{
         bool isBound;
 
         TrieNode(bool isBound=false){
-            memset(next,0,sizeof(next));
+            memset(next, 0, sizeof(next));
             this->isBound=isBound;
         }
     };
@@ -38,12 +38,12 @@ namespace Lexical{
             nodes.push_back(TrieNode());
         }
 
-        void insert(const string &s){
+        void insert(const string&s){
             int p=0;
-            for(int i=0;i<s.length();i++){
+            for(int i=0; i<s.length(); i++){
                 if(nodes[p].next[s[i]]!=0){
                     p=nodes[p].next[s[i]];
-                }else{
+                } else{
                     nodes.push_back(TrieNode());
                     nodes[p].next[s[i]]=nodes.size()-1;
                     p=nodes[p].next[s[i]];
@@ -71,71 +71,71 @@ namespace Lexical{
 
     int builtin_tokens_count=13;
     string builtin_tokens_array[][2]={
-            {"const", "CONSTTK"},
-            {"int",   "INTTK"},
-            {"char",  "CHARTK"},
-            {"void",  "VOIDTK"},
-            {"main",  "MAINTK"},
-            {"if",    "IFTK"},
-            {"else",  "ELSETK"},
-            {"do",    "DOTK"},
-            {"while", "WHILETK"},
-            {"for",   "FORTK"},
-            {"scanf", "SCANFTK"},
-            {"printf","PRINTFTK"},
-            {"return","RETURNTK"},
+            {"const",  "CONSTTK"},
+            {"int",    "INTTK"},
+            {"char",   "CHARTK"},
+            {"void",   "VOIDTK"},
+            {"main",   "MAINTK"},
+            {"if",     "IFTK"},
+            {"else",   "ELSETK"},
+            {"do",     "DOTK"},
+            {"while",  "WHILETK"},
+            {"for",    "FORTK"},
+            {"scanf",  "SCANFTK"},
+            {"printf", "PRINTFTK"},
+            {"return", "RETURNTK"},
     };
     int builtin_symbols_count=19;
     string builtin_symbols_array[][2]={
-            {"+", "PLUS"},
-            {"-", "MINU"},
-            {"*", "MULT"},
-            {"/", "DIV"},
-            {"<", "LSS"},
-            {"<=","LEQ"},
-            {">", "GRE"},
-            {">=","GEQ"},
-            {"==","EQL"},
-            {"!=","NEQ"},
-            {"=", "ASSIGN"},
-            {";", "SEMICN"},
-            {",", "COMMA"},
-            {"(", "LPARENT"},
-            {")", "RPARENT"},
-            {"[", "LBRACK"},
-            {"]", "RBRACK"},
-            {"{", "LBRACE"},
-            {"}", "RBRACE"},
+            {"+",  "PLUS"},
+            {"-",  "MINU"},
+            {"*",  "MULT"},
+            {"/",  "DIV"},
+            {"<",  "LSS"},
+            {"<=", "LEQ"},
+            {">",  "GRE"},
+            {">=", "GEQ"},
+            {"==", "EQL"},
+            {"!=", "NEQ"},
+            {"=",  "ASSIGN"},
+            {";",  "SEMICN"},
+            {",",  "COMMA"},
+            {"(",  "LPARENT"},
+            {")",  "RPARENT"},
+            {"[",  "LBRACK"},
+            {"]",  "RBRACK"},
+            {"{",  "LBRACE"},
+            {"}",  "RBRACE"},
     };
-    map<string,string> builtin_tokens,builtin_symbols;
+    map<string, string> builtin_tokens, builtin_symbols;
 
     bool emptyChar(char c){
-        return c==' ' || c=='\n' || c=='\r' || c=='\t';
+        return c==' '||c=='\n'||c=='\r'||c=='\t';
     }
 
-    void parseWord(const string &s){
+    void parseWord(const string&s){
         if(s.empty())return;
         if(isdigit(s[0])){
             // const token
-            result.push_back(make_pair("INTCON",s));
-        }else if(builtin_symbols.find(s)!=builtin_symbols.end()){
+            result.push_back(make_pair("INTCON", s));
+        } else if(builtin_symbols.find(s)!=builtin_symbols.end()){
             // bound symbols
-            result.push_back(make_pair(builtin_symbols[s],s));
-        }else if(builtin_tokens.find(s)!=builtin_tokens.end()){
+            result.push_back(make_pair(builtin_symbols[s], s));
+        } else if(builtin_tokens.find(s)!=builtin_tokens.end()){
             // keywords
-            result.push_back(make_pair(builtin_tokens[s],s));
-        }else{
+            result.push_back(make_pair(builtin_tokens[s], s));
+        } else{
             // identifier
-            result.push_back(make_pair("IDENFR",s));
+            result.push_back(make_pair("IDENFR", s));
         }
     }
 
-    vector<pair<string,string>> parse(){
+    vector<pair<string, string>> parse(){
         // construct auto-machines
-        for(int i=0;i<builtin_tokens_count;i++){
+        for(int i=0; i<builtin_tokens_count; i++){
             builtin_tokens[builtin_tokens_array[i][0]]=builtin_tokens_array[i][1];
         }
-        for(int i=0;i<builtin_symbols_count;i++){
+        for(int i=0; i<builtin_symbols_count; i++){
             builtin_symbols[builtin_symbols_array[i][0]]=builtin_symbols_array[i][1];
             autoMachine.insert(builtin_symbols_array[i][0]);
         }
@@ -153,7 +153,7 @@ namespace Lexical{
                 RESET_AUTOMACHINE
                 continue;
             }
-            if(c=='\'' || c=='\"'){
+            if(c=='\''||c=='\"'){
                 PARSE_WORD
                 char left=c;
                 ostringstream oss;
@@ -161,7 +161,7 @@ namespace Lexical{
                 while((c=ifs.get())!=left){
                     oss<<c;
                 }
-                result.push_back(make_pair(type,oss.str()));
+                result.push_back(make_pair(type, oss.str()));
                 RESET_AUTOMACHINE
                 continue;
             }
@@ -172,7 +172,7 @@ namespace Lexical{
                     // continue reading symbols
                     cache+=c;
                     continue;
-                }else{
+                } else{
                     // step into bound symbol -> pop previous word
                     PARSE_WORD
                     cache="";
@@ -180,14 +180,14 @@ namespace Lexical{
                     cache+=c;
                     status=1;
                 }
-            }else{
+            } else{
                 if(status==1){
                     // current symbol reading ends,
                     // pop symbol and reload
                     PARSE_WORD
                     RESET_AUTOMACHINE
                     goto RESTART;
-                }else{
+                } else{
                     // continue reading labels
                     status=0;
                     cache+=c;
@@ -204,176 +204,55 @@ namespace Lexical{
 namespace Grammar{
 
     using namespace std;
-    typedef vector<string> P;
 
     class Grammar{
     public:
-        vector<vector<string>> produce;
-        Grammar(const vector<vector<string>>& content){
-            produce=content;
+        vector<vector<Grammar>> produce;
+        bool isLeaf;
+        string content;
+
+        Grammar(const string&s, bool isLeaf){
+            this->isLeaf=true;
+            content=s;
         }
+
+        Grammar(const string&s){
+            isLeaf=false;
+            produce.push_back({});
+            produce[0].push_back(Grammar(s, true));
+        }
+
+        Grammar operator*(const Grammar&b){
+            for(auto&i:produce){
+                i.push_back(b);
+            }
+            return *this;
+        }
+
+        Grammar operator+(const Grammar&b){
+            for(auto&i:b.produce){
+                produce.push_back(i);
+            }
+            return *this;
+        }
+
         void parse(){
 
         }
     };
 
-    pair<string,Grammar> grammar_list[]={
-            make_pair("＜加法运算符＞",Grammar({
-                P({"PLUS"}),
-                P({"MINU"}),
-            })),
-            make_pair("＜乘法运算符＞",Grammar({
-                P({"MULT"}),
-                P({"DIV"}),
-            })),
-            make_pair("＜关系运算符＞",Grammar({
-                P({"LSS"}),
-                P({"LEQ"}),
-                P({"GRE"}),
-                P({"GEQ"}),
-                P({"EQL"}),
-                P({"NEQ"}),
-            })),
-            make_pair("＜数字＞",Grammar({
-                P({"INTCON"}),
-            })),
-            make_pair("＜字符＞",Grammar({
-                P({"CHARCON"}),
-            })),
-            make_pair("＜字符串＞",Grammar({
-                P({"STRCON"}),
-            })),
-            make_pair("＜程序＞",Grammar({
-                P({""}),
-            })),
-            make_pair("＜常量说明＞",Grammar({
-                P({"CONSTTK","＜常量说明＞1"}),
-            })),
-            make_pair("＜常量说明＞1",Grammar({
-                P({"CONSTTK",""}),
-            })),
-            make_pair("＜常量定义＞",Grammar({
-                                               P({""}),
-                                                P({""}),
-            })),
-            make_pair("＜无符号整数＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜整数＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜标识符＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜声明头部＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜变量说明＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜变量定义＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜类型标识符＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜有返回值函数定义＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜无返回值函数定义＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜复合语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜参数表＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜主函数＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜表达式＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜项＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜因子＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜赋值语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜条件语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜条件＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜循环语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜步长＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜有返回值函数调用语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜无返回值函数调用语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜值参数表＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜语句列＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜读语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜写语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-            make_pair("＜返回语句＞",Grammar({
-                P({""}),
-                P({""}),
-            })),
-    };
-    map<string,Grammar> grammars;
-    queue<pair<string,string>> tokens;
+    typedef Grammar G;
+
+    map<string, Grammar> grammars;
+    queue<pair<string, string>> tokens;
 
     void parse(){
-        while (!tokens.empty())tokens.pop();
+        auto a=G("a");
+        auto b=G("b");
+        auto c=a*b;
+        int i=1;
+
+        while(!tokens.empty())tokens.pop();
         auto res=Lexical::parse();
         for(auto&token:res){
             tokens.push(token);
@@ -383,7 +262,6 @@ namespace Grammar{
 
 }
 
-int main()
-{
+int main(){
     Grammar::parse();
 }
