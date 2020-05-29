@@ -208,18 +208,21 @@ namespace Grammar{
     class Grammar{
     public:
         vector<vector<Grammar>> produce;
+        bool isToken;
         bool isLeaf;
         string content;
 
-        Grammar(const string&s, bool isLeaf){
+        Grammar(const string&s, bool isToken, bool isLeaf){
+            this->isToken=isToken;
             this->isLeaf=true;
             content=s;
         }
 
-        Grammar(const string&s){
+        Grammar(const string&s, bool isToken){
+            this->isToken=isToken;
             isLeaf=false;
             produce.push_back({});
-            produce[0].push_back(Grammar(s, true));
+            produce[0].push_back(Grammar(s,isToken, true));
         }
 
         Grammar operator*(const Grammar&b){
@@ -241,21 +244,58 @@ namespace Grammar{
         }
     };
 
-    typedef Grammar G;
+#define G(s) Grammar(s,false)
+#define T(s) Grammar(s,true)
+#define mp make_pair
+
+    pair<string,Grammar> grammar_list[]={
+            mp("＜加法运算符＞",T("PLUS")+T("MINU")),
+            mp("＜乘法运算符＞",T("MULT")+T("DIV")),
+            mp("＜关系运算符＞",T("LSS")+T("LEQ")+T("GRE")+T("GEQ")+T("EQL")+T("NEQ")),
+            mp("＜字符＞",T("CHARCON")),
+            mp("＜字符串＞",T("STRCON")),
+            mp("＜程序＞",),
+            mp("＜常量说明＞",),
+            mp("＜常量定义＞",),
+            mp("＜无符号整数＞",),
+            mp("＜整数＞",),
+            mp("＜标识符＞",),
+            mp("＜声明头部＞",),
+            mp("＜变量说明＞",),
+            mp("＜变量定义＞",),
+            mp("＜类型标识符＞",T("INTTK")+T("CHARTK")),
+            mp("＜有返回值函数定义＞",G("＜声明头部＞")*T("LPARENT")*G("＜参数表＞")*T("RPARENT")*T("LBRACE")*G("＜复合语句＞")*T("RBRACE")),
+            mp("＜无返回值函数定义＞",T("VOIDTK")*T("IDENFR")*T("LPARENT")*G("＜参数表＞")*T("RPARENT")*T("LBRACE")*G("＜复合语句＞")*T("RBRACE")),
+            mp("＜复合语句＞",),
+            mp("＜参数表＞",G("＜类型标识符＞")*T("IDENFR")),
+            mp("＜主函数＞",T("VOIDTK")*T("MAINTK")),
+            mp("＜表达式＞",),
+            mp("＜项＞",),
+            mp("＜因子＞",),
+            mp("＜语句＞",),
+            mp("＜赋值语句＞",),
+            mp("＜条件语句＞",),
+            mp("＜条件＞",),
+            mp("＜循环语句＞",),
+            mp("＜步长＞",),
+            mp("＜有返回值函数调用语句＞",),
+            mp("＜无返回值函数调用语句＞",),
+            mp("＜值参数表＞",),
+            mp("＜语句列＞",),
+            mp("＜读语句＞",),
+            mp("＜写语句＞",),
+            mp("＜返回语句＞",),
+    };
 
     map<string, Grammar> grammars;
     queue<pair<string, string>> tokens;
 
     void parse(){
-        auto a=G("a");
-        auto b=G("b");
-        auto c=a*b;
-        int i=1;
-
         while(!tokens.empty())tokens.pop();
         auto res=Lexical::parse();
         for(auto&token:res){
             tokens.push(token);
+            cout<<token.first<<" "<<token.second<<endl;
         }
 
     }
