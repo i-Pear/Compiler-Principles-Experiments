@@ -15,7 +15,7 @@ namespace Lexical{
 
     using namespace std;
 
-    vector<pair<string, string>> result;
+    vector<pair<string,string>> result;
 
     class TrieNode{
     public:
@@ -23,7 +23,7 @@ namespace Lexical{
         bool isBound;
 
         TrieNode(bool isBound=false){
-            memset(next, 0, sizeof(next));
+            memset(next,0,sizeof(next));
             this->isBound=isBound;
         }
     };
@@ -38,12 +38,12 @@ namespace Lexical{
             nodes.push_back(TrieNode());
         }
 
-        void insert(const string&s){
+        void insert(const string &s){
             int p=0;
-            for(int i=0; i<s.length(); i++){
+            for(int i=0;i<s.length();i++){
                 if(nodes[p].next[s[i]]!=0){
                     p=nodes[p].next[s[i]];
-                } else{
+                }else{
                     nodes.push_back(TrieNode());
                     nodes[p].next[s[i]]=nodes.size()-1;
                     p=nodes[p].next[s[i]];
@@ -71,71 +71,71 @@ namespace Lexical{
 
     int builtin_tokens_count=13;
     string builtin_tokens_array[][2]={
-            {"const",  "CONSTTK"},
-            {"int",    "INTTK"},
-            {"char",   "CHARTK"},
-            {"void",   "VOIDTK"},
-            {"main",   "MAINTK"},
-            {"if",     "IFTK"},
-            {"else",   "ELSETK"},
-            {"do",     "DOTK"},
-            {"while",  "WHILETK"},
-            {"for",    "FORTK"},
-            {"scanf",  "SCANFTK"},
-            {"printf", "PRINTFTK"},
-            {"return", "RETURNTK"},
+            {"const", "CONSTTK"},
+            {"int",   "INTTK"},
+            {"char",  "CHARTK"},
+            {"void",  "VOIDTK"},
+            {"main",  "MAINTK"},
+            {"if",    "IFTK"},
+            {"else",  "ELSETK"},
+            {"do",    "DOTK"},
+            {"while", "WHILETK"},
+            {"for",   "FORTK"},
+            {"scanf", "SCANFTK"},
+            {"printf","PRINTFTK"},
+            {"return","RETURNTK"},
     };
     int builtin_symbols_count=19;
     string builtin_symbols_array[][2]={
-            {"+",  "PLUS"},
-            {"-",  "MINU"},
-            {"*",  "MULT"},
-            {"/",  "DIV"},
-            {"<",  "LSS"},
-            {"<=", "LEQ"},
-            {">",  "GRE"},
-            {">=", "GEQ"},
-            {"==", "EQL"},
-            {"!=", "NEQ"},
-            {"=",  "ASSIGN"},
-            {";",  "SEMICN"},
-            {",",  "COMMA"},
-            {"(",  "LPARENT"},
-            {")",  "RPARENT"},
-            {"[",  "LBRACK"},
-            {"]",  "RBRACK"},
-            {"{",  "LBRACE"},
-            {"}",  "RBRACE"},
+            {"+", "PLUS"},
+            {"-", "MINU"},
+            {"*", "MULT"},
+            {"/", "DIV"},
+            {"<", "LSS"},
+            {"<=","LEQ"},
+            {">", "GRE"},
+            {">=","GEQ"},
+            {"==","EQL"},
+            {"!=","NEQ"},
+            {"=", "ASSIGN"},
+            {";", "SEMICN"},
+            {",", "COMMA"},
+            {"(", "LPARENT"},
+            {")", "RPARENT"},
+            {"[", "LBRACK"},
+            {"]", "RBRACK"},
+            {"{", "LBRACE"},
+            {"}", "RBRACE"},
     };
-    map<string, string> builtin_tokens, builtin_symbols;
+    map<string,string> builtin_tokens,builtin_symbols;
 
     bool emptyChar(char c){
-        return c==' '||c=='\n'||c=='\r'||c=='\t';
+        return c==' ' || c=='\n' || c=='\r' || c=='\t';
     }
 
-    void parseWord(const string&s){
+    void parseWord(const string &s){
         if(s.empty())return;
         if(isdigit(s[0])){
             // const token
-            result.push_back(make_pair("INTCON", s));
-        } else if(builtin_symbols.find(s)!=builtin_symbols.end()){
+            result.push_back(make_pair("INTCON",s));
+        }else if(builtin_symbols.find(s)!=builtin_symbols.end()){
             // bound symbols
-            result.push_back(make_pair(builtin_symbols[s], s));
-        } else if(builtin_tokens.find(s)!=builtin_tokens.end()){
+            result.push_back(make_pair(builtin_symbols[s],s));
+        }else if(builtin_tokens.find(s)!=builtin_tokens.end()){
             // keywords
-            result.push_back(make_pair(builtin_tokens[s], s));
-        } else{
+            result.push_back(make_pair(builtin_tokens[s],s));
+        }else{
             // identifier
-            result.push_back(make_pair("IDENFR", s));
+            result.push_back(make_pair("IDENFR",s));
         }
     }
 
-    vector<pair<string, string>> parse(){
+    vector<pair<string,string>> parse(){
         // construct auto-machines
-        for(int i=0; i<builtin_tokens_count; i++){
+        for(int i=0;i<builtin_tokens_count;i++){
             builtin_tokens[builtin_tokens_array[i][0]]=builtin_tokens_array[i][1];
         }
-        for(int i=0; i<builtin_symbols_count; i++){
+        for(int i=0;i<builtin_symbols_count;i++){
             builtin_symbols[builtin_symbols_array[i][0]]=builtin_symbols_array[i][1];
             autoMachine.insert(builtin_symbols_array[i][0]);
         }
@@ -153,7 +153,7 @@ namespace Lexical{
                 RESET_AUTOMACHINE
                 continue;
             }
-            if(c=='\''||c=='\"'){
+            if(c=='\'' || c=='\"'){
                 PARSE_WORD
                 char left=c;
                 ostringstream oss;
@@ -161,7 +161,7 @@ namespace Lexical{
                 while((c=ifs.get())!=left){
                     oss<<c;
                 }
-                result.push_back(make_pair(type, oss.str()));
+                result.push_back(make_pair(type,oss.str()));
                 RESET_AUTOMACHINE
                 continue;
             }
@@ -172,7 +172,7 @@ namespace Lexical{
                     // continue reading symbols
                     cache+=c;
                     continue;
-                } else{
+                }else{
                     // step into bound symbol -> pop previous word
                     PARSE_WORD
                     cache="";
@@ -180,14 +180,14 @@ namespace Lexical{
                     cache+=c;
                     status=1;
                 }
-            } else{
+            }else{
                 if(status==1){
                     // current symbol reading ends,
                     // pop symbol and reload
                     PARSE_WORD
                     RESET_AUTOMACHINE
                     goto RESTART;
-                } else{
+                }else{
                     // continue reading labels
                     status=0;
                     cache+=c;
@@ -270,111 +270,530 @@ namespace Grammar{
 
     queue<pair<string,string>> words;
 #define N words.front().first
+#define R cout<<words.front().first<<" "<<words.front().second<<endl; words.pop();
+#define W(s) cout<<s<<endl; cout.flush();
 
     class Analyze{
     public:
-        bool 程序(){
-            常量说明();
-            变量说明();
-            while (有返回值函数定义()||无返回值函数定义());
-            主函数();
+        static bool ADD_OPR(){
+            if(N=="PLUS" || N=="MINU"){
+                R
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 常量说明(){
-            if(N=="CONSTTK")
-        }
-        bool 常量定义(){
 
+        static bool MUL_OPR(){
+            if(N=="MULT" || N=="DIV"){
+                R
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 无符号整数(){
 
+        static bool CMP_OPR(){
+            if(N=="LSS" || N=="LEQ" || N=="GRE" || N=="GEQ" || N=="EQL" || N=="NEQ"){
+                R
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 整数(){
 
+        static bool PROG(){
+            CONST_DECLARATION();
+            VAR_DECL();
+            while(FUNC_WITH_VAL() || FUNC_WITHOUT_VAL());
+            MAIN_FUNC();
+            W("＜程序＞");
+            return true;
         }
-        bool 声明头部(){
 
+        static bool CONST_DECLARATION(){
+            if(N=="CONSTTK"){
+                R
+                while(CONST_DEF());
+                W("＜常量说明＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 变量说明(){
 
+        static bool CONST_DEF(){
+            if(N=="INTTK"){
+                R
+                R
+                R
+                R
+                while(N=="COMMA"){
+                    R
+                    R
+                    R
+                    R
+                }
+                W("＜常量定义＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 变量定义(){
 
+        static bool DECL_HEADER(){
+            if(N=="INTTK" || N=="CHARTK"){
+                R
+                R
+                W("＜声明头部＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 类型标识符(){
 
+        static bool VAR_DECL(){
+            if(VAR_DEFINE()){
+                while (VAR_DEFINE());
+                W("＜变量说明＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 有返回值函数定义(){
 
+        static bool VAR_DEFINE(){
+            if(TYPE_SYMBOL()){
+                R
+                R
+                if(N=="LBRACK"){
+                    R
+                    R
+                    R
+                }
+                while(N=="COMMA"){
+                    R
+                    R
+                    if(N=="LBRACK"){
+                        R
+                        R
+                        R
+                    }
+                }
+                W("＜变量定义＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 无返回值函数定义(){
 
+        static bool TYPE_SYMBOL(){
+            if(N=="INTTK" || N=="CHARTK"){
+                R
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 复合语句(){
 
+        static bool FUNC_WITH_VAL(){
+            if(DECL_HEADER()){
+                R
+                ARGUMENTS();
+                R
+                R
+                MIXED_SENTENCE();
+                R
+                W("＜有返回值函数定义＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 参数表(){
 
+        static bool FUNC_WITHOUT_VAL(){
+            if(N=="VOIDTK"){
+                R
+                R
+
+                R
+                ARGUMENTS();
+                R
+
+                R
+                MIXED_SENTENCE();
+                R
+                W("＜无返回值函数定义＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 主函数(){
 
+        static bool MIXED_SENTENCE(){
+            CONST_DECLARATION();
+            VAR_DECL();
+            if(SENTENCE_LIST()){
+                W("＜复合语句＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 表达式(){
 
+        static bool ARGUMENTS(){
+            if(TYPE_SYMBOL()){
+                R
+                while(TYPE_SYMBOL()){
+                    R
+                }
+            }
+            W("＜参数表＞");
+            return true;
         }
-        bool 项(){
 
+        static bool MAIN_FUNC(){
+            if(N=="VOIDTK"){
+                R
+                R
+                R
+                R
+                R
+                MIXED_SENTENCE();
+                R
+                W("＜主函数＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 因子(){
 
+        static bool EXPRESSION(){
+            if(N=="PLUS" || N=="MINU"){
+                R
+            }
+            if(ITEM()){
+                while(ADD_OPR()){
+                    ITEM();
+                }
+                W("＜表达式＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 语句(){
 
+        static bool ITEM(){
+            if(FACTOR()){
+                while(MUL_OPR()){
+                    FACTOR();
+                }
+                W("＜项＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 赋值语句(){
 
+        static bool FACTOR(){
+            if(N=="IDENFR"){
+                R
+                if(N=="LBRACK"){
+                    R
+                    EXPRESSION();
+                    R
+                }
+                W("＜因子＞");
+                return true;
+            }else if(N=="LPARENT"){
+                R
+                EXPRESSION();
+                R
+                W("＜因子＞");
+                return true;
+            }else if(N=="INTCON"){
+                R
+                W("＜因子＞");
+                return true;
+            }else if(N=="CHARCON"){
+                R
+                W("＜因子＞");
+                return true;
+            }else if(FUNC_CALL_VAL()){
+                W("＜因子＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 条件语句(){
 
+        static bool SENTENCE(){
+            if(CONDITION_SENTENCE()){
+                W("＜语句＞");
+                return true;
+            }
+            if(LOOP_SENTENCE()){
+                W("＜语句＞");
+                return true;
+            }
+            if(N=="LBRACE"){
+                R
+                SENTENCE_LIST();
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(FUNC_CALL_VAL()){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(FUNC_CALL_VOID()){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(ASSIGNMENT()){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(READ_SENTENCE()){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(WRITE_SENTENCE()){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(RETURN_SENTENCE()){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            if(N=="SEMICN"){
+                R
+                W("＜语句＞");
+                return true;
+            }
+            return false;
         }
-        bool 条件(){
 
+        static bool ASSIGNMENT(){
+            if(N=="IDENFR"){
+                R
+                if(N=="ASSIGN"){
+                    R
+                    EXPRESSION();
+                }else{
+                    R
+                    EXPRESSION();
+                    R
+                    R
+                    EXPRESSION();
+                }
+                W("＜赋值语句＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 循环语句(){
 
+        static bool CONDITION_SENTENCE(){
+            if(N=="IFTK"){
+                R
+                R
+                CONDITION();
+                R
+                SENTENCE();
+                if(N=="ELSETK"){
+                    R
+                    SENTENCE();
+                }
+                W("＜条件语句＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 步长(){
 
+        static bool CONDITION(){
+            if(EXPRESSION()){
+                if(CMP_OPR()){
+                    EXPRESSION();
+                }
+                W("＜条件＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 有返回值函数调用语句(){
 
+        static bool LOOP_SENTENCE(){
+            if(N=="WHILETK"){
+                R
+                R
+                CONDITION();
+                R
+                SENTENCE();
+                W("＜循环语句＞");
+                return true;
+            }
+            if(N=="DOTK"){
+                R
+                SENTENCE();
+                R
+                R
+                CONDITION();
+                R
+                W("＜循环语句＞");
+                return true;
+            }
+            if(N=="FORTK"){
+                R
+                R
+                R
+                R
+                EXPRESSION();
+                R
+                CONDITION();
+                R
+                R
+                R
+                R
+                R
+                STEP();
+                R // )
+                SENTENCE();
+                W("＜循环语句＞");
+                return true;
+            }
+            return false;
         }
-        bool 无返回值函数调用语句(){
 
+        static bool STEP(){
+            if(N=="INTCON"){
+                R
+                W("＜步长＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 值参数表(){
 
+        static bool FUNC_CALL_VAL(){
+            if(N=="IDENFR"){
+                R
+                R
+                VAL_ARGUMENTS();
+                R
+                W("＜有返回值函数调用语句＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 语句列(){
 
+        static bool FUNC_CALL_VOID(){
+            if(N=="IDENFR"){
+                R
+                R
+                VAL_ARGUMENTS();
+                R
+                W("＜无返回值函数调用语句＞");
+                return true;
+            }else{
+                return false;
+            }
         }
-        bool 读语句(){
 
+        static bool VAL_ARGUMENTS(){
+            if(EXPRESSION()){
+                while(N=="COMMA"){
+                    R
+                    EXPRESSION();
+                }
+            }
+            W("＜值参数表＞");
+            return true;
         }
-        bool 写语句(){
 
+        static bool SENTENCE_LIST(){
+            while(SENTENCE());
+            W("＜语句列＞");
+            return true;
         }
-        bool 返回语句(){
 
+        static bool READ_SENTENCE(){
+            if(N=="SCANFTK"){
+                R
+                R
+                R
+                while(N=="COMMA"){
+                    R
+                    R
+                }
+                R
+                W("＜读语句＞");
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        static bool WRITE_SENTENCE(){
+            if(N=="PRINTFTK"){
+                R
+                R
+                if(N=="STRCON"){
+                    R
+                    if(N=="COMMA"){
+                        R
+                        EXPRESSION();
+                        R
+                    }else{
+                        R
+                    }
+                }else{
+                    EXPRESSION();
+                    R
+                }
+                W("＜写语句＞");
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        static bool RETURN_SENTENCE(){
+            if(N=="RETURNTK"){
+                R
+                if(N=="LPARENT"){
+                    R
+                    EXPRESSION();
+                    R
+                }
+                W("＜返回语句＞");
+                return true;
+            }else{
+                return false;
+            }
         }
 
     };
 
     void parse(){
         auto lex=Lexical::parse();
-        for(auto&i:lex){
+        for(auto &i:lex){
             words.push(i);
+            // cout<<i.first<<" "<<i.second<<endl;
         }
+        cout<<"--------------------------"<<endl;
 
+        Analyze::PROG();
+        cout<<"ok"<<endl;
     }
 }
 
