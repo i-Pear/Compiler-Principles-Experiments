@@ -201,7 +201,8 @@ namespace Lexical{
 
 }
 
-namespace Grammar{
+/*
+ namespace Grammar{
 
     using namespace std;
 
@@ -260,6 +261,121 @@ namespace Grammar{
 
     }
 
+}
+ */
+
+namespace Grammar{
+
+    using namespace std;
+
+    queue<pair<string,string>> words;
+#define N words.front().first
+
+    class Analyze{
+    public:
+        bool 程序(){
+            常量说明();
+            变量说明();
+            while (有返回值函数定义()||无返回值函数定义());
+            主函数();
+        }
+        bool 常量说明(){
+            if(N=="CONSTTK")
+        }
+        bool 常量定义(){
+
+        }
+        bool 无符号整数(){
+
+        }
+        bool 整数(){
+
+        }
+        bool 声明头部(){
+
+        }
+        bool 变量说明(){
+
+        }
+        bool 变量定义(){
+
+        }
+        bool 类型标识符(){
+
+        }
+        bool 有返回值函数定义(){
+
+        }
+        bool 无返回值函数定义(){
+
+        }
+        bool 复合语句(){
+
+        }
+        bool 参数表(){
+
+        }
+        bool 主函数(){
+
+        }
+        bool 表达式(){
+
+        }
+        bool 项(){
+
+        }
+        bool 因子(){
+
+        }
+        bool 语句(){
+
+        }
+        bool 赋值语句(){
+
+        }
+        bool 条件语句(){
+
+        }
+        bool 条件(){
+
+        }
+        bool 循环语句(){
+
+        }
+        bool 步长(){
+
+        }
+        bool 有返回值函数调用语句(){
+
+        }
+        bool 无返回值函数调用语句(){
+
+        }
+        bool 值参数表(){
+
+        }
+        bool 语句列(){
+
+        }
+        bool 读语句(){
+
+        }
+        bool 写语句(){
+
+        }
+        bool 返回语句(){
+
+        }
+
+    };
+
+    void parse(){
+        auto lex=Lexical::parse();
+        for(auto&i:lex){
+            words.push(i);
+        }
+
+    }
 }
 
 int main(){
