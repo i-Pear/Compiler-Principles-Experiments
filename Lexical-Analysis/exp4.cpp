@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdio>
 #include <map>
-#include <queue>
 #include <string>
 #include <vector>
 #include <cstring>
@@ -15,7 +14,7 @@ namespace Lexical{
 
     using namespace std;
 
-    vector<pair<string,string>> result;
+    vector<pair<string, string> > result;
 
     class TrieNode{
     public:
@@ -23,7 +22,7 @@ namespace Lexical{
         bool isBound;
 
         TrieNode(bool isBound=false){
-            memset(next,0,sizeof(next));
+            memset(next, 0, sizeof(next));
             this->isBound=isBound;
         }
     };
@@ -38,12 +37,12 @@ namespace Lexical{
             nodes.push_back(TrieNode());
         }
 
-        void insert(const string &s){
+        void insert(const string&s){
             int p=0;
-            for(int i=0;i<s.length();i++){
+            for(int i=0; i<s.length(); i++){
                 if(nodes[p].next[s[i]]!=0){
                     p=nodes[p].next[s[i]];
-                }else{
+                } else{
                     nodes.push_back(TrieNode());
                     nodes[p].next[s[i]]=nodes.size()-1;
                     p=nodes[p].next[s[i]];
@@ -71,71 +70,71 @@ namespace Lexical{
 
     int builtin_tokens_count=13;
     string builtin_tokens_array[][2]={
-            {"const", "CONSTTK"},
-            {"int",   "INTTK"},
-            {"char",  "CHARTK"},
-            {"void",  "VOIDTK"},
-            {"main",  "MAINTK"},
-            {"if",    "IFTK"},
-            {"else",  "ELSETK"},
-            {"do",    "DOTK"},
-            {"while", "WHILETK"},
-            {"for",   "FORTK"},
-            {"scanf", "SCANFTK"},
-            {"printf","PRINTFTK"},
-            {"return","RETURNTK"},
+            {"const",  "CONSTTK"},
+            {"int",    "INTTK"},
+            {"char",   "CHARTK"},
+            {"void",   "VOIDTK"},
+            {"main",   "MAINTK"},
+            {"if",     "IFTK"},
+            {"else",   "ELSETK"},
+            {"do",     "DOTK"},
+            {"while",  "WHILETK"},
+            {"for",    "FORTK"},
+            {"scanf",  "SCANFTK"},
+            {"printf", "PRINTFTK"},
+            {"return", "RETURNTK"},
     };
     int builtin_symbols_count=19;
     string builtin_symbols_array[][2]={
-            {"+", "PLUS"},
-            {"-", "MINU"},
-            {"*", "MULT"},
-            {"/", "DIV"},
-            {"<", "LSS"},
-            {"<=","LEQ"},
-            {">", "GRE"},
-            {">=","GEQ"},
-            {"==","EQL"},
-            {"!=","NEQ"},
-            {"=", "ASSIGN"},
-            {";", "SEMICN"},
-            {",", "COMMA"},
-            {"(", "LPARENT"},
-            {")", "RPARENT"},
-            {"[", "LBRACK"},
-            {"]", "RBRACK"},
-            {"{", "LBRACE"},
-            {"}", "RBRACE"},
+            {"+",  "PLUS"},
+            {"-",  "MINU"},
+            {"*",  "MULT"},
+            {"/",  "DIV"},
+            {"<",  "LSS"},
+            {"<=", "LEQ"},
+            {">",  "GRE"},
+            {">=", "GEQ"},
+            {"==", "EQL"},
+            {"!=", "NEQ"},
+            {"=",  "ASSIGN"},
+            {";",  "SEMICN"},
+            {",",  "COMMA"},
+            {"(",  "LPARENT"},
+            {")",  "RPARENT"},
+            {"[",  "LBRACK"},
+            {"]",  "RBRACK"},
+            {"{",  "LBRACE"},
+            {"}",  "RBRACE"},
     };
-    map<string,string> builtin_tokens,builtin_symbols;
+    map<string, string> builtin_tokens, builtin_symbols;
 
     bool emptyChar(char c){
-        return c==' ' || c=='\n' || c=='\r' || c=='\t';
+        return c==' '||c=='\n'||c=='\r'||c=='\t';
     }
 
-    void parseWord(const string &s){
+    void parseWord(const string&s){
         if(s.empty())return;
         if(isdigit(s[0])){
             // const token
-            result.push_back(make_pair("INTCON",s));
-        }else if(builtin_symbols.find(s)!=builtin_symbols.end()){
+            result.push_back(make_pair("INTCON", s));
+        } else if(builtin_symbols.find(s)!=builtin_symbols.end()){
             // bound symbols
-            result.push_back(make_pair(builtin_symbols[s],s));
-        }else if(builtin_tokens.find(s)!=builtin_tokens.end()){
+            result.push_back(make_pair(builtin_symbols[s], s));
+        } else if(builtin_tokens.find(s)!=builtin_tokens.end()){
             // keywords
-            result.push_back(make_pair(builtin_tokens[s],s));
-        }else{
+            result.push_back(make_pair(builtin_tokens[s], s));
+        } else{
             // identifier
-            result.push_back(make_pair("IDENFR",s));
+            result.push_back(make_pair("IDENFR", s));
         }
     }
 
-    vector<pair<string,string>> parse(){
+    vector<pair<string, string> > parse(){
         // construct auto-machines
-        for(int i=0;i<builtin_tokens_count;i++){
+        for(int i=0; i<builtin_tokens_count; i++){
             builtin_tokens[builtin_tokens_array[i][0]]=builtin_tokens_array[i][1];
         }
-        for(int i=0;i<builtin_symbols_count;i++){
+        for(int i=0; i<builtin_symbols_count; i++){
             builtin_symbols[builtin_symbols_array[i][0]]=builtin_symbols_array[i][1];
             autoMachine.insert(builtin_symbols_array[i][0]);
         }
@@ -153,7 +152,7 @@ namespace Lexical{
                 RESET_AUTOMACHINE
                 continue;
             }
-            if(c=='\'' || c=='\"'){
+            if(c=='\''||c=='\"'){
                 PARSE_WORD
                 char left=c;
                 ostringstream oss;
@@ -161,7 +160,7 @@ namespace Lexical{
                 while((c=ifs.get())!=left){
                     oss<<c;
                 }
-                result.push_back(make_pair(type,oss.str()));
+                result.push_back(make_pair(type, oss.str()));
                 RESET_AUTOMACHINE
                 continue;
             }
@@ -172,7 +171,7 @@ namespace Lexical{
                     // continue reading symbols
                     cache+=c;
                     continue;
-                }else{
+                } else{
                     // step into bound symbol -> pop previous word
                     PARSE_WORD
                     cache="";
@@ -180,14 +179,14 @@ namespace Lexical{
                     cache+=c;
                     status=1;
                 }
-            }else{
+            } else{
                 if(status==1){
                     // current symbol reading ends,
                     // pop symbol and reload
                     PARSE_WORD
                     RESET_AUTOMACHINE
                     goto RESTART;
-                }else{
+                } else{
                     // continue reading labels
                     status=0;
                     cache+=c;
@@ -250,42 +249,42 @@ namespace Lexical{
 #define mp make_pair
 
     pair<string,Grammar> grammar_list[]={
-            mp("＜加法运算符＞",T("PLUS")+T("MINU")),
-            mp("＜乘法运算符＞",T("MULT")+T("DIV")),
-            mp("＜关系运算符＞",T("LSS")+T("LEQ")+T("GRE")+T("GEQ")+T("EQL")+T("NEQ")),
-            mp("＜字符＞",T("CHARCON")),
-            mp("＜字符串＞",T("STRCON")),
-            mp("＜程序＞",),
-            mp("＜常量说明＞",),
-            mp("＜常量定义＞",),
-            mp("＜无符号整数＞",),
-            mp("＜整数＞",),
-            mp("＜标识符＞",),
-            mp("＜声明头部＞",),
-            mp("＜变量说明＞",),
-            mp("＜变量定义＞",),
-            mp("＜类型标识符＞",T("INTTK")+T("CHARTK")),
-            mp("＜有返回值函数定义＞",G("＜声明头部＞")*T("LPARENT")*G("＜参数表＞")*T("RPARENT")*T("LBRACE")*G("＜复合语句＞")*T("RBRACE")),
-            mp("＜无返回值函数定义＞",T("VOIDTK")*T("IDENFR")*T("LPARENT")*G("＜参数表＞")*T("RPARENT")*T("LBRACE")*G("＜复合语句＞")*T("RBRACE")),
-            mp("＜复合语句＞",),
-            mp("＜参数表＞",G("＜类型标识符＞")*T("IDENFR")),
-            mp("＜主函数＞",T("VOIDTK")*T("MAINTK")),
-            mp("＜表达式＞",),
-            mp("＜项＞",),
-            mp("＜因子＞",),
-            mp("＜语句＞",),
-            mp("＜赋值语句＞",),
-            mp("＜条件语句＞",),
-            mp("＜条件＞",),
-            mp("＜循环语句＞",),
-            mp("＜步长＞",),
-            mp("＜有返回值函数调用语句＞",),
-            mp("＜无返回值函数调用语句＞",),
-            mp("＜值参数表＞",),
-            mp("＜语句列＞",),
-            mp("＜读语句＞",),
-            mp("＜写语句＞",),
-            mp("＜返回语句＞",),
+            mp("<加法运算符>",T("PLUS")+T("MINU")),
+            mp("<乘法运算符>",T("MULT")+T("DIV")),
+            mp("<关系运算符>",T("LSS")+T("LEQ")+T("GRE")+T("GEQ")+T("EQL")+T("NEQ")),
+            mp("<字符>",T("CHARCON")),
+            mp("<字符串>",T("STRCON")),
+            mp("<程序>",),
+            mp("<常量说明>",),
+            mp("<常量定义>",),
+            mp("<无符号整数>",),
+            mp("<整数>",),
+            mp("<标识符>",),
+            mp("<声明头部>",),
+            mp("<变量说明>",),
+            mp("<变量定义>",),
+            mp("<类型标识符>",T("INTTK")+T("CHARTK")),
+            mp("<有返回值函数定义>",G("<声明头部>")*T("LPARENT")*G("<参数表>")*T("RPARENT")*T("LBRACE")*G("<复合语句>")*T("RBRACE")),
+            mp("<无返回值函数定义>",T("VOIDTK")*T("IDENFR")*T("LPARENT")*G("<参数表>")*T("RPARENT")*T("LBRACE")*G("<复合语句>")*T("RBRACE")),
+            mp("<复合语句>",),
+            mp("<参数表>",G("<类型标识符>")*T("IDENFR")),
+            mp("<主函数>",T("VOIDTK")*T("MAINTK")),
+            mp("<表达式>",),
+            mp("<项>",),
+            mp("<因子>",),
+            mp("<语句>",),
+            mp("<赋值语句>",),
+            mp("<条件语句>",),
+            mp("<条件>",),
+            mp("<循环语句>",),
+            mp("<步长>",),
+            mp("<有返回值函数调用语句>",),
+            mp("<无返回值函数调用语句>",),
+            mp("<值参数表>",),
+            mp("<语句列>",),
+            mp("<读语句>",),
+            mp("<写语句>",),
+            mp("<返回语句>",),
     };
 
     map<string, Grammar> grammars;
@@ -308,36 +307,71 @@ namespace Grammar{
 
     using namespace std;
 
-    queue<pair<string,string>> words;
-#define N words.front().first
-#define R cout<<words.front().first<<" "<<words.front().second<<endl; words.pop();
+    vector<pair<string, string> > words;
+    map<string,bool> func_info;
+
+#define N words[0].first
+#define R cout<<words[0].first<<" "<<words[0].second<<endl; words.erase(words.begin());
 #define W(s) cout<<s<<endl; cout.flush();
 
     class Analyze{
     public:
+
+        static bool STRING(){
+            if(N=="STRCON"){
+                R
+                W("<字符串>");
+                return true;
+            } else{
+                return false;
+            }
+        }
+
+        static bool UNSIGNED(){
+            if(N=="INTCON"){
+                R
+                W("<无符号整数>")
+                return true;
+            } else{
+                return false;
+            }
+        }
+
+        static bool SIGNED(){
+            if(N=="PLUS"||N=="MINU"){
+                R
+            }
+            if(UNSIGNED()){
+                W("<整数>");
+                return true;
+            } else{
+                return false;
+            }
+        }
+
         static bool ADD_OPR(){
-            if(N=="PLUS" || N=="MINU"){
+            if(N=="PLUS"||N=="MINU"){
                 R
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool MUL_OPR(){
-            if(N=="MULT" || N=="DIV"){
+            if(N=="MULT"||N=="DIV"){
                 R
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool CMP_OPR(){
-            if(N=="LSS" || N=="LEQ" || N=="GRE" || N=="GEQ" || N=="EQL" || N=="NEQ"){
+            if(N=="LSS"||N=="LEQ"||N=="GRE"||N=="GEQ"||N=="EQL"||N=="NEQ"){
                 R
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -345,19 +379,25 @@ namespace Grammar{
         static bool PROG(){
             CONST_DECLARATION();
             VAR_DECL();
-            while(FUNC_WITH_VAL() || FUNC_WITHOUT_VAL());
+            while(FUNC_WITH_VAL()||FUNC_WITHOUT_VAL());
             MAIN_FUNC();
-            W("＜程序＞");
+            W("<程序>");
             return true;
         }
 
         static bool CONST_DECLARATION(){
             if(N=="CONSTTK"){
                 R
-                while(CONST_DEF());
-                W("＜常量说明＞");
+                CONST_DEF();
+                R
+                while (N=="CONSTTK"){
+                    R
+                    CONST_DEF();
+                    R
+                }
+                W("<常量说明>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -367,6 +407,19 @@ namespace Grammar{
                 R
                 R
                 R
+                SIGNED();
+                while(N=="COMMA"){
+                    R
+                    R
+                    R
+                    SIGNED();
+                }
+                W("<常量定义>");
+                return true;
+            } else if(N=="CHARTK"){
+                R
+                R
+                R
                 R
                 while(N=="COMMA"){
                     R
@@ -374,41 +427,46 @@ namespace Grammar{
                     R
                     R
                 }
-                W("＜常量定义＞");
+                W("<常量定义>");
                 return true;
-            }else{
+            }{
                 return false;
             }
         }
 
         static bool DECL_HEADER(){
-            if(N=="INTTK" || N=="CHARTK"){
+            if(N=="INTTK"||N=="CHARTK"){
                 R
+                func_info[words[0].second]=true;
                 R
-                W("＜声明头部＞");
+                W("<声明头部>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool VAR_DECL(){
+            if(words[2].first=="LPARENT")return false;
             if(VAR_DEFINE()){
-                while (VAR_DEFINE());
-                W("＜变量说明＞");
+                R
+                while(words[2].first!="LPARENT"&&VAR_DEFINE()){
+                    R
+                }
+                W("<变量说明>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool VAR_DEFINE(){
+            if(words[1].first=="MAINTK")return false;
             if(TYPE_SYMBOL()){
-                R
                 R
                 if(N=="LBRACK"){
                     R
-                    R
+                    UNSIGNED();
                     R
                 }
                 while(N=="COMMA"){
@@ -416,22 +474,22 @@ namespace Grammar{
                     R
                     if(N=="LBRACK"){
                         R
-                        R
+                        UNSIGNED();
                         R
                     }
                 }
-                W("＜变量定义＞");
+                W("<变量定义>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool TYPE_SYMBOL(){
-            if(N=="INTTK" || N=="CHARTK"){
+            if(N=="INTTK"||N=="CHARTK"){
                 R
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -444,16 +502,18 @@ namespace Grammar{
                 R
                 MIXED_SENTENCE();
                 R
-                W("＜有返回值函数定义＞");
+                W("<有返回值函数定义>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool FUNC_WITHOUT_VAL(){
+            if(words[1].first=="MAINTK")return false;
             if(N=="VOIDTK"){
                 R
+                func_info[words[0].second]=false;
                 R
 
                 R
@@ -463,9 +523,9 @@ namespace Grammar{
                 R
                 MIXED_SENTENCE();
                 R
-                W("＜无返回值函数定义＞");
+                W("<无返回值函数定义>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -474,9 +534,9 @@ namespace Grammar{
             CONST_DECLARATION();
             VAR_DECL();
             if(SENTENCE_LIST()){
-                W("＜复合语句＞");
+                W("<复合语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -484,11 +544,13 @@ namespace Grammar{
         static bool ARGUMENTS(){
             if(TYPE_SYMBOL()){
                 R
-                while(TYPE_SYMBOL()){
+                while(N=="COMMA"){
+                    R
+                    TYPE_SYMBOL();
                     R
                 }
             }
-            W("＜参数表＞");
+            W("<参数表>");
             return true;
         }
 
@@ -501,24 +563,24 @@ namespace Grammar{
                 R
                 MIXED_SENTENCE();
                 R
-                W("＜主函数＞");
+                W("<主函数>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool EXPRESSION(){
-            if(N=="PLUS" || N=="MINU"){
+            if(N=="PLUS"||N=="MINU"){
                 R
             }
             if(ITEM()){
                 while(ADD_OPR()){
                     ITEM();
                 }
-                W("＜表达式＞");
+                W("<表达式>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -528,94 +590,93 @@ namespace Grammar{
                 while(MUL_OPR()){
                     FACTOR();
                 }
-                W("＜项＞");
+                W("<项>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool FACTOR(){
-            if(N=="IDENFR"){
+            if(FUNC_CALL_VAL()){
+                W("<因子>");
+                return true;
+            }else if(N=="IDENFR"){
                 R
                 if(N=="LBRACK"){
                     R
                     EXPRESSION();
                     R
                 }
-                W("＜因子＞");
+                W("<因子>");
                 return true;
-            }else if(N=="LPARENT"){
+            } else if(N=="LPARENT"){
                 R
                 EXPRESSION();
                 R
-                W("＜因子＞");
+                W("<因子>");
                 return true;
-            }else if(N=="INTCON"){
+            } else if(SIGNED()){
+                W("<因子>");
+                return true;
+            } else if(N=="CHARCON"){
                 R
-                W("＜因子＞");
+                W("<因子>");
                 return true;
-            }else if(N=="CHARCON"){
-                R
-                W("＜因子＞");
-                return true;
-            }else if(FUNC_CALL_VAL()){
-                W("＜因子＞");
-                return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool SENTENCE(){
             if(CONDITION_SENTENCE()){
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(LOOP_SENTENCE()){
-                W("＜语句＞");
+                W("<语句>")
                 return true;
             }
             if(N=="LBRACE"){
                 R
                 SENTENCE_LIST();
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(FUNC_CALL_VAL()){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(FUNC_CALL_VOID()){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(ASSIGNMENT()){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(READ_SENTENCE()){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(WRITE_SENTENCE()){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(RETURN_SENTENCE()){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             if(N=="SEMICN"){
                 R
-                W("＜语句＞");
+                W("<语句>");
                 return true;
             }
             return false;
@@ -627,16 +688,16 @@ namespace Grammar{
                 if(N=="ASSIGN"){
                     R
                     EXPRESSION();
-                }else{
+                } else{
                     R
                     EXPRESSION();
                     R
                     R
                     EXPRESSION();
                 }
-                W("＜赋值语句＞");
+                W("<赋值语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -652,9 +713,9 @@ namespace Grammar{
                     R
                     SENTENCE();
                 }
-                W("＜条件语句＞");
+                W("<条件语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -664,9 +725,9 @@ namespace Grammar{
                 if(CMP_OPR()){
                     EXPRESSION();
                 }
-                W("＜条件＞");
+                W("<条件>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -678,7 +739,7 @@ namespace Grammar{
                 CONDITION();
                 R
                 SENTENCE();
-                W("＜循环语句＞");
+                W("<循环语句>");
                 return true;
             }
             if(N=="DOTK"){
@@ -688,7 +749,7 @@ namespace Grammar{
                 R
                 CONDITION();
                 R
-                W("＜循环语句＞");
+                W("<循环语句>");
                 return true;
             }
             if(N=="FORTK"){
@@ -707,44 +768,45 @@ namespace Grammar{
                 STEP();
                 R // )
                 SENTENCE();
-                W("＜循环语句＞");
+                W("<循环语句>");
                 return true;
             }
             return false;
         }
 
         static bool STEP(){
-            if(N=="INTCON"){
-                R
-                W("＜步长＞");
+            if(UNSIGNED()){
+                W("<步长>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool FUNC_CALL_VAL(){
-            if(N=="IDENFR"){
+            if(words[1].first!="LPARENT")return false;
+            if(N=="IDENFR"&&func_info[words[0].second]){
                 R
                 R
                 VAL_ARGUMENTS();
                 R
-                W("＜有返回值函数调用语句＞");
+                W("<有返回值函数调用语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
 
         static bool FUNC_CALL_VOID(){
-            if(N=="IDENFR"){
+            if(words[1].first!="LPARENT")return false;
+            if(N=="IDENFR"&&(!func_info[words[0].second])){
                 R
                 R
                 VAL_ARGUMENTS();
                 R
-                W("＜无返回值函数调用语句＞");
+                W("<无返回值函数调用语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -756,13 +818,13 @@ namespace Grammar{
                     EXPRESSION();
                 }
             }
-            W("＜值参数表＞");
+            W("<值参数表>");
             return true;
         }
 
         static bool SENTENCE_LIST(){
             while(SENTENCE());
-            W("＜语句列＞");
+            W("<语句列>");
             return true;
         }
 
@@ -776,9 +838,9 @@ namespace Grammar{
                     R
                 }
                 R
-                W("＜读语句＞");
+                W("<读语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -787,22 +849,21 @@ namespace Grammar{
             if(N=="PRINTFTK"){
                 R
                 R
-                if(N=="STRCON"){
-                    R
+                if(STRING()){
                     if(N=="COMMA"){
                         R
                         EXPRESSION();
                         R
-                    }else{
+                    } else{
                         R
                     }
-                }else{
+                } else{
                     EXPRESSION();
                     R
                 }
-                W("＜写语句＞");
+                W("<写语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -815,9 +876,9 @@ namespace Grammar{
                     EXPRESSION();
                     R
                 }
-                W("＜返回语句＞");
+                W("<返回语句>");
                 return true;
-            }else{
+            } else{
                 return false;
             }
         }
@@ -825,18 +886,20 @@ namespace Grammar{
     };
 
     void parse(){
-        auto lex=Lexical::parse();
-        for(auto &i:lex){
-            words.push(i);
+        vector<pair<string, string> > lex=Lexical::parse();
+        for(int i=0;i<lex.size();i++){
+            pair<string, string>& item=lex[i];
+            words.push_back(item);
             // cout<<i.first<<" "<<i.second<<endl;
         }
-        cout<<"--------------------------"<<endl;
+        //cout<<"--------------------------"<<endl;
 
         Analyze::PROG();
-        cout<<"ok"<<endl;
+        //cout<<"ok"<<endl;
     }
 }
 
 int main(){
+    freopen("output.txt","w",stdout);
     Grammar::parse();
 }
