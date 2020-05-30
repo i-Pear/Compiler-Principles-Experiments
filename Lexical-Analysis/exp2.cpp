@@ -184,6 +184,11 @@ namespace Grammar{
         }
     };
 
+    class SLR1: public Analyzer{
+    public:
+
+    };
+
 }
 using namespace std;
 
