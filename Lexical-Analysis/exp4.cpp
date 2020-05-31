@@ -311,7 +311,7 @@ namespace Grammar{
     map<string,bool> func_info;
 
 #define N words[0].first
-#define R cout<<words[0].first<<" "<<words[0].second<<endl; words.erase(words.begin());
+#define R(t) for(int i=0;i<t;i++)cout<<words[0].first<<" "<<words[0].second<<endl; words.erase(words.begin());
 #define W(s) cout<<s<<endl; cout.flush();
 
     class Analyze{
@@ -319,7 +319,7 @@ namespace Grammar{
 
         static bool STRING(){
             if(N=="STRCON"){
-                R
+                R(1)
                 W("<字符串>");
                 return true;
             } else{
@@ -329,7 +329,7 @@ namespace Grammar{
 
         static bool UNSIGNED(){
             if(N=="INTCON"){
-                R
+                R(1)
                 W("<无符号整数>")
                 return true;
             } else{
@@ -339,7 +339,7 @@ namespace Grammar{
 
         static bool SIGNED(){
             if(N=="PLUS"||N=="MINU"){
-                R
+                R(1)
             }
             if(UNSIGNED()){
                 W("<整数>");
@@ -351,7 +351,7 @@ namespace Grammar{
 
         static bool ADD_OPR(){
             if(N=="PLUS"||N=="MINU"){
-                R
+                R(1)
                 return true;
             } else{
                 return false;
@@ -360,7 +360,7 @@ namespace Grammar{
 
         static bool MUL_OPR(){
             if(N=="MULT"||N=="DIV"){
-                R
+                R(1)
                 return true;
             } else{
                 return false;
@@ -369,7 +369,7 @@ namespace Grammar{
 
         static bool CMP_OPR(){
             if(N=="LSS"||N=="LEQ"||N=="GRE"||N=="GEQ"||N=="EQL"||N=="NEQ"){
-                R
+                R(1)
                 return true;
             } else{
                 return false;
@@ -387,13 +387,13 @@ namespace Grammar{
 
         static bool CONST_DECLARATION(){
             if(N=="CONSTTK"){
-                R
+                R(1)
                 CONST_DEF();
-                R
+                R(1)
                 while (N=="CONSTTK"){
-                    R
+                    R(1)
                     CONST_DEF();
-                    R
+                    R(1)
                 }
                 W("<常量说明>");
                 return true;
@@ -404,28 +404,18 @@ namespace Grammar{
 
         static bool CONST_DEF(){
             if(N=="INTTK"){
-                R
-                R
-                R
+                R(3)
                 SIGNED();
                 while(N=="COMMA"){
-                    R
-                    R
-                    R
+                    R(3)
                     SIGNED();
                 }
                 W("<常量定义>");
                 return true;
             } else if(N=="CHARTK"){
-                R
-                R
-                R
-                R
+                R(4)
                 while(N=="COMMA"){
-                    R
-                    R
-                    R
-                    R
+                    R(4)
                 }
                 W("<常量定义>");
                 return true;
@@ -436,9 +426,9 @@ namespace Grammar{
 
         static bool DECL_HEADER(){
             if(N=="INTTK"||N=="CHARTK"){
-                R
+                R(1)
                 func_info[words[0].second]=true;
-                R
+                R(1)
                 W("<声明头部>");
                 return true;
             } else{
@@ -449,9 +439,9 @@ namespace Grammar{
         static bool VAR_DECL(){
             if(words[2].first=="LPARENT")return false;
             if(VAR_DEFINE()){
-                R
+                R(1)
                 while(words[2].first!="LPARENT"&&VAR_DEFINE()){
-                    R
+                    R(1)
                 }
                 W("<变量说明>");
                 return true;
@@ -463,19 +453,18 @@ namespace Grammar{
         static bool VAR_DEFINE(){
             if(words[1].first=="MAINTK")return false;
             if(TYPE_SYMBOL()){
-                R
+                R(1)
                 if(N=="LBRACK"){
-                    R
+                    R(1)
                     UNSIGNED();
-                    R
+                    R(1)
                 }
                 while(N=="COMMA"){
-                    R
-                    R
+                    R(2)
                     if(N=="LBRACK"){
-                        R
+                        R(1)
                         UNSIGNED();
-                        R
+                        R(1)
                     }
                 }
                 W("<变量定义>");
@@ -487,7 +476,7 @@ namespace Grammar{
 
         static bool TYPE_SYMBOL(){
             if(N=="INTTK"||N=="CHARTK"){
-                R
+                R(1)
                 return true;
             } else{
                 return false;
@@ -496,12 +485,11 @@ namespace Grammar{
 
         static bool FUNC_WITH_VAL(){
             if(DECL_HEADER()){
-                R
+                R(1)
                 ARGUMENTS();
-                R
-                R
+                R(2)
                 MIXED_SENTENCE();
-                R
+                R(1)
                 W("<有返回值函数定义>");
                 return true;
             } else{
@@ -512,17 +500,13 @@ namespace Grammar{
         static bool FUNC_WITHOUT_VAL(){
             if(words[1].first=="MAINTK")return false;
             if(N=="VOIDTK"){
-                R
+                R(1)
                 func_info[words[0].second]=false;
-                R
-
-                R
+                R(2)
                 ARGUMENTS();
-                R
-
-                R
+                R(2)
                 MIXED_SENTENCE();
-                R
+                R(1)
                 W("<无返回值函数定义>");
                 return true;
             } else{
@@ -543,11 +527,11 @@ namespace Grammar{
 
         static bool ARGUMENTS(){
             if(TYPE_SYMBOL()){
-                R
+                R(1)
                 while(N=="COMMA"){
-                    R
+                    R(1)
                     TYPE_SYMBOL();
-                    R
+                    R(1)
                 }
             }
             W("<参数表>");
@@ -556,13 +540,9 @@ namespace Grammar{
 
         static bool MAIN_FUNC(){
             if(N=="VOIDTK"){
-                R
-                R
-                R
-                R
-                R
+                R(5)
                 MIXED_SENTENCE();
-                R
+                R(1)
                 W("<主函数>");
                 return true;
             } else{
@@ -572,7 +552,7 @@ namespace Grammar{
 
         static bool EXPRESSION(){
             if(N=="PLUS"||N=="MINU"){
-                R
+                R(1)
             }
             if(ITEM()){
                 while(ADD_OPR()){
@@ -602,25 +582,25 @@ namespace Grammar{
                 W("<因子>");
                 return true;
             }else if(N=="IDENFR"){
-                R
+                R(1)
                 if(N=="LBRACK"){
-                    R
+                    R(1)
                     EXPRESSION();
-                    R
+                    R(1)
                 }
                 W("<因子>");
                 return true;
             } else if(N=="LPARENT"){
-                R
+                R(1)
                 EXPRESSION();
-                R
+                R(1)
                 W("<因子>");
                 return true;
             } else if(SIGNED()){
                 W("<因子>");
                 return true;
             } else if(N=="CHARCON"){
-                R
+                R(1)
                 W("<因子>");
                 return true;
             } else{
@@ -638,44 +618,44 @@ namespace Grammar{
                 return true;
             }
             if(N=="LBRACE"){
-                R
+                R(1)
                 SENTENCE_LIST();
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(FUNC_CALL_VAL()){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(FUNC_CALL_VOID()){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(ASSIGNMENT()){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(READ_SENTENCE()){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(WRITE_SENTENCE()){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(RETURN_SENTENCE()){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
             if(N=="SEMICN"){
-                R
+                R(1)
                 W("<语句>");
                 return true;
             }
@@ -684,15 +664,14 @@ namespace Grammar{
 
         static bool ASSIGNMENT(){
             if(N=="IDENFR"){
-                R
+                R(1)
                 if(N=="ASSIGN"){
-                    R
+                    R(1)
                     EXPRESSION();
                 } else{
-                    R
+                    R(1)
                     EXPRESSION();
-                    R
-                    R
+                    R(2)
                     EXPRESSION();
                 }
                 W("<赋值语句>");
@@ -704,13 +683,12 @@ namespace Grammar{
 
         static bool CONDITION_SENTENCE(){
             if(N=="IFTK"){
-                R
-                R
+                R(2)
                 CONDITION();
-                R
+                R(1)
                 SENTENCE();
                 if(N=="ELSETK"){
-                    R
+                    R(1)
                     SENTENCE();
                 }
                 W("<条件语句>");
@@ -734,39 +712,30 @@ namespace Grammar{
 
         static bool LOOP_SENTENCE(){
             if(N=="WHILETK"){
-                R
-                R
+                R(2)
                 CONDITION();
-                R
+                R(1)
                 SENTENCE();
                 W("<循环语句>");
                 return true;
             }
             if(N=="DOTK"){
-                R
+                R(1)
                 SENTENCE();
-                R
-                R
+                R(2)
                 CONDITION();
-                R
+                R(1)
                 W("<循环语句>");
                 return true;
             }
             if(N=="FORTK"){
-                R
-                R
-                R
-                R
+                R(4)
                 EXPRESSION();
-                R
+                R(1)
                 CONDITION();
-                R
-                R
-                R
-                R
-                R
+                R(5)
                 STEP();
-                R // )
+                R(1) // )
                 SENTENCE();
                 W("<循环语句>");
                 return true;
@@ -786,10 +755,9 @@ namespace Grammar{
         static bool FUNC_CALL_VAL(){
             if(words[1].first!="LPARENT")return false;
             if(N=="IDENFR"&&func_info[words[0].second]){
-                R
-                R
+                R(2)
                 VAL_ARGUMENTS();
-                R
+                R(1)
                 W("<有返回值函数调用语句>");
                 return true;
             } else{
@@ -800,10 +768,9 @@ namespace Grammar{
         static bool FUNC_CALL_VOID(){
             if(words[1].first!="LPARENT")return false;
             if(N=="IDENFR"&&(!func_info[words[0].second])){
-                R
-                R
+                R(2)
                 VAL_ARGUMENTS();
-                R
+                R(1)
                 W("<无返回值函数调用语句>");
                 return true;
             } else{
@@ -814,7 +781,7 @@ namespace Grammar{
         static bool VAL_ARGUMENTS(){
             if(EXPRESSION()){
                 while(N=="COMMA"){
-                    R
+                    R(1)
                     EXPRESSION();
                 }
             }
@@ -830,14 +797,11 @@ namespace Grammar{
 
         static bool READ_SENTENCE(){
             if(N=="SCANFTK"){
-                R
-                R
-                R
+                R(3)
                 while(N=="COMMA"){
-                    R
-                    R
+                    R(2)
                 }
-                R
+                R(1)
                 W("<读语句>");
                 return true;
             } else{
@@ -847,19 +811,18 @@ namespace Grammar{
 
         static bool WRITE_SENTENCE(){
             if(N=="PRINTFTK"){
-                R
-                R
+                R(2)
                 if(STRING()){
                     if(N=="COMMA"){
-                        R
+                        R(1)
                         EXPRESSION();
-                        R
+                        R(1)
                     } else{
-                        R
+                        R(1)
                     }
                 } else{
                     EXPRESSION();
-                    R
+                    R(1)
                 }
                 W("<写语句>");
                 return true;
@@ -870,11 +833,11 @@ namespace Grammar{
 
         static bool RETURN_SENTENCE(){
             if(N=="RETURNTK"){
-                R
+                R(1)
                 if(N=="LPARENT"){
-                    R
+                    R(1)
                     EXPRESSION();
-                    R
+                    R(1)
                 }
                 W("<返回语句>");
                 return true;
