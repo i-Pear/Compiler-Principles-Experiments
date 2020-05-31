@@ -11,7 +11,7 @@
 #define ERROR throw runtime_error("ERROR");
 
 enum Type{
-    E, E1, T, T1, F, w0, w1, I, LP, RP, EOS,None
+    E, E1, T, T1, F, w0, w1, I, LP, RP, EOS, None
 };
 
 bool isFinal(Type t){
@@ -21,6 +21,8 @@ bool isFinal(Type t){
 namespace Lexical{
 
     using namespace std;
+
+    vector<pair<Type, string>> words;
 
     bool isSymbol(char c){
         return c=='+'||c=='-'||c=='*'||c=='/'||c=='('||c==')';
@@ -32,7 +34,7 @@ namespace Lexical{
         return s;
     }
 
-    vector<pair<Type, string>> parse(){
+    void parse(){
         cout<<"Enter arithmetic expression:"<<endl;
         string input;
         getline(cin, input);
@@ -41,6 +43,9 @@ namespace Lexical{
         for(char c:input){
             if(isSymbol(c)){
                 if(!cache.str().empty()){
+                    int pointCount=0;
+                    for(char c:cache.str())if(c=='.')pointCount++;
+                    if(pointCount>1)ERROR
                     res.push_back(make_pair(I, cache.str()));
                     cache.str("");
                 }
@@ -48,9 +53,9 @@ namespace Lexical{
                     res.push_back(make_pair(w0, char2str(c)));
                 } else if(c=='*'||c=='/'){
                     res.push_back(make_pair(w1, char2str(c)));
-                }else if(c=='('){
+                } else if(c=='('){
                     res.push_back(make_pair(LP, char2str(c)));
-                }else if(c==')'){
+                } else if(c==')'){
                     res.push_back(make_pair(RP, char2str(c)));
                 }
             } else{
@@ -61,10 +66,13 @@ namespace Lexical{
             }
         }
         if(!cache.str().empty()){
+            int pointCount=0;
+            for(char c:cache.str())if(c=='.')pointCount++;
+            if(pointCount>1)ERROR
             res.push_back(make_pair(I, cache.str()));
         }
         res.push_back(make_pair(EOS, ""));
-        return res;
+        words=res;
     }
 
 }
@@ -76,7 +84,7 @@ namespace Grammar{
     class Analyzer{
     public:
         Analyzer(){
-            words=Lexical::parse();
+            words=Lexical::words;
         }
 
         void read(Type t){
@@ -223,7 +231,7 @@ namespace Grammar{
 
         map<int, map<Type, Option>> table;
 
-        void reAll(int n,Produce p){
+        void reAll(int n, Produce p){
             // E, E1, T, T1, F, w0, w1, I, LP, RP, EOS
             table[n][E]=p;
             table[n][E1]=p;
@@ -246,13 +254,13 @@ namespace Grammar{
             table[1][F]=11;
             table[2][w0]=4;
             table[2][EOS]=-1;
-            reAll(3,Produce(E, {T}));
+            reAll(3, Produce(E, {T}));
             table[3][w1]=6;
             table[4][F]=11;
             table[4][I]=12;
             table[4][LP]=7;
             table[4][T]=5;
-            reAll(5,Produce(E, {E, w0, T}));
+            reAll(5, Produce(E, {E, w0, T}));
             table[5][w1]=6;
             table[6][I]=12;
             table[6][LP]=7;
@@ -264,17 +272,18 @@ namespace Grammar{
             table[7][T]=3;
             table[8][w0]=4;
             table[8][RP]=9;
-            reAll(9,Produce(F, {LP, E, RP}));
-            reAll(10,Produce(T, {T, w1, F}));
-            reAll(11,Produce(T, {F}));
-            reAll(12,Produce(F, {I}));
+            reAll(9, Produce(F, {LP, E, RP}));
+            reAll(10, Produce(T, {T, w1, F}));
+            reAll(11, Produce(T, {F}));
+            reAll(12, Produce(F, {I}));
         }
 
         void parse(){
             stack<int> stack;
             stack.push(1);
             while(!stack.empty()){
-                if(table.find(stack.top())==table.end()||table[stack.top()].find(words.front().first)==table[stack.top()].end()){
+                if(table.find(stack.top())==table.end()||
+                   table[stack.top()].find(words.front().first)==table[stack.top()].end()){
                     ERROR
                 }
                 if(table[stack.top()][words.front().first].op==Option::N){
@@ -285,10 +294,11 @@ namespace Grammar{
                     words.erase(words.begin());
                 } else{
                     auto temp=stack.top();
-                    for(auto i=table[temp][words.front().first].produce->right.rbegin();i!=table[temp][words.front().first].produce->right.rend(); i++){
+                    for(auto i=table[temp][words.front().first].produce->right.rbegin();
+                        i!=table[temp][words.front().first].produce->right.rend(); i++){
                         stack.pop();
                     }
-                    words.insert(words.begin(),make_pair(table[temp][words.front().first].produce->left,""));
+                    words.insert(words.begin(), make_pair(table[temp][words.front().first].produce->left, ""));
                 }
             }
         }
@@ -299,12 +309,50 @@ namespace Grammar{
 using namespace std;
 
 int main(){
-    try{
-        Grammar::SLR1 parser;
-        parser.parse();
-    } catch(runtime_error&re){
-        cout<<"ERROR"<<endl;
-        return 0;
+    {
+        try{
+            Lexical::parse();
+            cout<<"Lexical analysis succeeded."<<endl<<endl;
+        } catch(runtime_error&re){
+            cout<<"Lexical analysis failed!"<<endl;
+            return 0;
+        }
     }
-    cout<<"OK"<<endl;
+
+    // RecursiveDescentSubroutine Analyzer
+    {
+        cout<<"RecursiveDescentSubroutine Analyzer:"<<endl;
+        try{
+            Grammar::RecursiveDescentSubroutine parser;
+            parser.parse();
+            cout<<"Right"<<endl;
+        } catch(runtime_error&re){
+            cout<<"Wrong"<<endl;
+        }
+    }
+
+    // LL1 Analyzer
+    {
+        cout<<"LL1 Analyzer:"<<endl;
+        try{
+            Grammar::LL1 parser;
+            parser.parse();
+            cout<<"Right"<<endl;
+        } catch(runtime_error&re){
+            cout<<"Wrong"<<endl;
+        }
+    }
+
+    // SLR1 Analyzer
+    {
+        cout<<"SLR1 Analyzer:"<<endl;
+        try{
+            Grammar::SLR1 parser;
+            parser.parse();
+            cout<<"Right"<<endl;
+        } catch(runtime_error&re){
+            cout<<"Wrong"<<endl;
+        }
+    }
+
 }
