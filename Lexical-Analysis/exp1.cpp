@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstring>
 #include <fstream>
+#include <exception>
+#include <stdexcept>
 using namespace std;
 
 #define READ_CHAR c=ifs.get();
@@ -161,7 +163,7 @@ int main(){
     }
     mLabel.count=0;
     // read file
-    ifstream ifs("code.txt");
+    ifstream ifs("testfile.txt");
     char c=ifs.get();
     do{
         if(isEmptyChar(c)){
@@ -170,8 +172,17 @@ int main(){
         } else if(c=='\''){
             // specially check strings with ''
             char left=c;
+            int count=0;
+            bool isTrans=false;
             while((c=ifs.get())!=left){
                 mChar.next(c);
+                if(count==0&&c=='\\')isTrans=true;
+                count++;
+            }
+            if(count>1&&(!(count==2&&isTrans))){
+                cout<<"Multi chars in '' !"<<endl;
+                system("pause");
+                throw runtime_error("Multi chars in '' !");
             }
             READ_CHAR
         } else if(c=='\"'){
@@ -196,4 +207,6 @@ int main(){
     } while(c!=EOF);
     AutoMachine::clearLast(); // deal with the last object
     ifs.close();
+
+    system("pause");
 }

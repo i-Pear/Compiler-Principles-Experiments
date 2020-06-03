@@ -137,6 +137,7 @@ namespace Grammar{
             if(words.front().first==I){
                 read(I);
             } else if(words.front().first==LP){
+                read(LP);
                 E();
                 read(RP);
             } else{
@@ -315,6 +316,7 @@ int main(){
             cout<<"Lexical analysis succeeded."<<endl<<endl;
         } catch(runtime_error&re){
             cout<<"Lexical analysis failed!"<<endl;
+            system("pause");
             return 0;
         }
     }
@@ -355,4 +357,6 @@ int main(){
         }
     }
 
+    cout<<endl;
+    system("pause");
 }

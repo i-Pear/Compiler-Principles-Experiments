@@ -160,6 +160,10 @@ namespace Lexical{
                 while((c=ifs.get())!=left){
                     oss<<c;
                 }
+                if(type=="CHARCON"&&oss.str().length()>2){
+                    cout<<"Multi chars in '' !"<<endl;
+                    throw runtime_error("Multi chars in '' !");
+                }
                 result.push_back(make_pair(type, oss.str()));
                 RESET_AUTOMACHINE
                 continue;
