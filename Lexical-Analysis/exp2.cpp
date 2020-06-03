@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstdio>
 #include <map>
 #include <string>
 #include <vector>
@@ -43,6 +42,9 @@ namespace Lexical{
         for(char c:input){
             if(isSymbol(c)){
                 if(!cache.str().empty()){
+                    if(*cache.str().rbegin()=='.'){
+                        ERROR
+                    }
                     int pointCount=0;
                     for(char c:cache.str())if(c=='.')pointCount++;
                     if(pointCount>1)ERROR
@@ -66,6 +68,9 @@ namespace Lexical{
             }
         }
         if(!cache.str().empty()){
+            if(*cache.str().rbegin()=='.'){
+                ERROR
+            }
             int pointCount=0;
             for(char c:cache.str())if(c=='.')pointCount++;
             if(pointCount>1)ERROR

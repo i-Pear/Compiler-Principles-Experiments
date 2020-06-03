@@ -20,6 +20,7 @@ string getType(Type type){
 }
 
 class TrieNode{
+    /* Node of auto machine */
 public:
     int next[128];
     int id;
@@ -34,6 +35,8 @@ public:
 
 class AutoMachine{
 public:
+    /* Auto machine -- Main part */
+
     static AutoMachine*last;
     Type type;
     int count;
@@ -166,6 +169,7 @@ int main(){
     ifstream ifs("testfile.txt");
     char c=ifs.get();
     do{
+        // Analyze type of chars
         if(isEmptyChar(c)){
             AutoMachine::clearLast();
             READ_CHAR

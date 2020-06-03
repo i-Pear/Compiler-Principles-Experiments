@@ -315,7 +315,7 @@ namespace Grammar{
     map<string,bool> func_info;
 
 #define N words[0].first
-#define R(t) for(int i=0;i<t;i++)cout<<words[0].first<<" "<<words[0].second<<endl; words.erase(words.begin());
+#define R(t) for(int i=0;i<t;i++){cout<<words[0].first<<" "<<words[0].second<<endl; words.erase(words.begin());}
 #define W(s) cout<<s<<endl; cout.flush();
 
     class Analyze{
